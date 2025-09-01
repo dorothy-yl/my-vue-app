@@ -2,7 +2,7 @@
 </script>
 
 <template>
- <router-view></router-view>
+ <div>我是main组件</div>
 </template>
 
 <style scoped>
