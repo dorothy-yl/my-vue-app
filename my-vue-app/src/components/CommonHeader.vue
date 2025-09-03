@@ -2,7 +2,7 @@
     <div class="header">
         <div class="header-left">
             <div class="l-content"> </div>
-            <el-button size="small">
+            <el-button size="small" @click="handleCollapse">
                 <el-icon><Menu /></el-icon>
             </el-button>
             <el-breadcrumb separator="/" class="bread">
@@ -12,7 +12,7 @@
         <div class="r-content">
             <el-dropdown>
                 <span class="el-dropdown-link">
-                 <img :src="getImageUrl('user')"  class="user">
+                 <img :src="userImg"  class="user">
                 </span>
                 <template #dropdown>
                     <el-dropdown-menu>
@@ -26,10 +26,14 @@
 </template>
 <script setup>
 import { ref, computed } from 'vue';
-import { Menu } from '@element-plus/icons-vue';
-
+import { useAllDateStore } from '@/stores';
+import userImg from '@/assets/images/user.png';
 const getImageUrl = (user) =>{
-    return new URL(`@/images/${user}.png`, import.meta.url).href
+    return new URL('../assets/images/user.png',import.meta.url).href
+}
+const store = useAllDateStore()
+const handleCollapse = () =>{
+    store.state.isCollapse = !store.state.isCollapse
 }
 </script>
 <style scoped lang="less">
@@ -46,7 +50,7 @@ const getImageUrl = (user) =>{
     display: flex;
     align-items: center;
 }
-.icons {
+.icon {
     width: 20px;
     height: 20px;
 }
@@ -70,5 +74,6 @@ const getImageUrl = (user) =>{
 :deep(.bread span){
     color: #fff !important;
     cursor: pointer !important;
+    margin-left: 10px !important;
 }
 </style>

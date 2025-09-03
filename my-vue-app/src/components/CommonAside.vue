@@ -1,21 +1,24 @@
 <template>
-    <el-aside width="180px">
-        <el-menu background-color="#545c64" text-color="#fff"   :collapse="false">
-            <h3>通用后台管理系统</h3>
+    <el-aside :width="width">
+        <el-menu background-color="#545c64" text-color="#fff" :collapse="isCollapse">
+            <h3 v-show="!isCollapse">通用后台管理</h3>
+            <h3 v-show="isCollapse">后台</h3>
+
             <el-menu-item v-for="item in noChildren" :index="item.path" :key="item.path">
 
-                <component class="icon" :is="item.icon"></component>
+                <component class="icons" :is="item.icon"></component>
                 <span>{{ item.label }}</span>
             </el-menu-item>
 
             <el-sub-menu v-for="item in hasChildren" :index="item.path" :key="item.path">
                 <template #title>
-                    <component class="icon" :is="item.icon"></component>
+                    <component class="icons" :is="item.icon"></component>
                     <span>{{ item.label }}</span>
                 </template>
                 <el-menu-item-group>
-                    <el-menu-item v-for="(subItem, subIndex) in item.children" :index="subItem.path" :key="subItem.path">
-                        <component class="icon" :is="subItem.icon"></component>
+                    <el-menu-item v-for="(subItem, subIndex) in item.children" :index="subItem.path"
+                        :key="subItem.path">
+                        <component class="icons" :is="subItem.icon"></component>
                         <span>{{ subItem.label }}</span>
                     </el-menu-item>
                 </el-menu-item-group>
@@ -25,6 +28,7 @@
 </template>
 <script setup>
 import { ref, computed } from 'vue';
+import { useAllDateStore } from '@/stores'
 const list = ref([
     {
         path: '/home',
@@ -71,7 +75,9 @@ const list = ref([
 ])
 const noChildren = computed(() => list.value.filter(item => !item.children))
 const hasChildren = computed(() => list.value.filter(item => item.children))
-
+const store = useAllDateStore()
+const isCollapse = computed(() => store.state.isCollapse)
+const width = computed(() => store.state.isCollapse ? '64px' : '180px')
 </script>
 <style scoped lang="less">
 .icons {
@@ -82,14 +88,16 @@ const hasChildren = computed(() => list.value.filter(item => item.children))
 
 .el-menu {
     border-right: none;
+
     h3 {
         color: #fff;
         text-align: center;
         line-height: 48px;
+        // padding: 10px 20px;
     }
 }
 
-.el-aside{
+.el-aside {
     height: 100%;
     background-color: #545c64;
 }
