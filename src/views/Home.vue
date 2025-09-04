@@ -24,9 +24,17 @@ const xOptions = reactive({
   textStyle: {
     color: "#333",
   },
-  legend: {},
+  legend: {
+    top: "5%",
+    left: "center",
+    orient: "horizontal"
+  },
   grid: {
-    left: "20%",
+    left: "5%",
+    right: "5%",
+    top: "20%",
+    bottom: "10%",
+    containLabel: true
   },
   // 提示框
   tooltip: {
@@ -62,7 +70,18 @@ const pieOptions = reactive({
   tooltip: {
     trigger: "item",
   },
-  legend: {},
+  legend: {
+    top: "2%",
+    left: "center",
+    orient: "horizontal",
+    itemWidth: 6,
+    itemHeight: 6,
+    itemGap: 15,
+    textStyle: {
+      fontSize: 9,
+      color: "#333"
+    }
+  },
   color: [
     "#0f78f4",
     "#dd536b",
@@ -95,6 +114,7 @@ const getChartData = async () => {
   const OneEcharts = echarts.init(proxy.$refs["echart"])
   OneEcharts.setOption(xOptions)
 
+  // 对第二个图表进行渲染
   xOptions.xAxis.data = userData.map((item) => item.date)
     xOptions.series = [
         {
@@ -115,6 +135,8 @@ const getChartData = async () => {
         {
           data: videoData,
           type: "pie",
+          center: ["50%", "60%"],
+          radius: ["30%", "60%"]
         },
       ]
     //three
@@ -153,8 +175,8 @@ onMounted(() => {
           </div>
         </div>
         <div class="login-info">
-          <p><span>上次登录时间:</span> <span>2022-7-11</span></p>
-          <p><span>上次登录的地点:</span> <span>北京</span></p>
+          <p><span>上次登录时间:</span> <span>2025-9-4</span></p>
+          <p><span>上次登录的地点:</span> <span>广东</span></p>
 
         </div>
       </el-card>
@@ -178,18 +200,21 @@ onMounted(() => {
             <p class="txt">{{ item.name }}</p>
           </div>
         </el-card>
+      </div>
         <el-card class="top-echart">
-          <div ref="echart" style="height: 280px;"></div>
+          <div ref="echart" style="height: 150px;"></div>
         </el-card>
       
         <div class=" graph">
           <el-card>
-            <div ref="userEchart" style="height: 240px;"></div>
+            <div ref="userEchart" style="height: 190px;"></div>
             </el-card>
+
             <el-card>
-              <div ref="videoEchart" style="height: 240px;"></div>
-          </el-card>    
-        </div>
+              <div ref="videoEchart" style="height: 180px;"></div>
+          </el-card>  
+
+     
       </div>
     </el-col>
   </el-row>
@@ -263,9 +288,9 @@ onMounted(() => {
   }
 
   .icon {
-    width: 80px;
-    height: 80px;
-    font-size: 30px;
+    width: 50px;
+    height: 50px;
+    font-size: 10px;
     text-align: center;
     line-height: 80px;
     color: white;
@@ -278,8 +303,8 @@ onMounted(() => {
     justify-content: center;
 
     .num {
-      font-size: 30px;
-      margin-bottom: 10px;
+      font-size: 20px;
+      margin-bottom: 5px;
     }
 
     .txt {
@@ -290,17 +315,17 @@ onMounted(() => {
   }
 
   .top-echart {
-    width: 100%;
+    width: 200px;
+    height: 100px;
   }
 }
 
 .graph{
   display: flex;
-  margin-top: 20px;
+  margin-top: 10px;
   justify-content: space-between;
   .el-card{
-    width: 48%;
-    height: 260px;
+    width: 45%;
   }
 }
 </style>
