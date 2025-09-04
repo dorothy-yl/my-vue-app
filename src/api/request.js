@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-const service = axios.create()
+import config from '../config';
+const service = axios.create({
+    baseURL: config.baseApi,
+})
 const NETWORK_ERROR = '网络错误...'
 // 添加请求拦截器
 service.interceptors.request.use(function (config) {
@@ -13,7 +16,7 @@ service.interceptors.request.use(function (config) {
 
 // 添加响应拦截器
 service.interceptors.response.use(
-   (res) => {
+    (res) => {
         const { code, data, msg } = res.data
         if (code === 200) {
             return data
@@ -28,6 +31,20 @@ service.interceptors.response.use(
 
 function request(options) {
     options.method = options.method || 'get'
+    if (options.method.toLowerCase() === 'get') {
+        options.params = options.data
+    }
+    //   对mock的开关做一个处理
+    let isMock = config.mock;
+    if (typeof options.mock !== 'undefined') {
+        isMock = options.mock;
+    }
+
+    if (config.env === 'prod') {
+        service.defaults.baseURL = config.baseApi;
+    } else {
+        service.defaults.baseURL = isMock ? config.mockApi : config.baseApi;
+    }
     return service(options)
 }
-export default request;
+export default request

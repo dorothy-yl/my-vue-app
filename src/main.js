@@ -5,7 +5,7 @@ import router from './router'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import { createPinia } from 'pinia'
-import './api/mock'
+import './api/mock.js'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import api from './api/api'
 const pinia = createPinia()

@@ -1,38 +1,141 @@
 <script setup>
-import { ref, getCurrentInstance, onMounted } from 'vue';
+import { ref, getCurrentInstance, reactive } from 'vue';
+import * as echarts from "echarts";
+import { onMounted } from 'vue'
+
 const { proxy } = getCurrentInstance()
 
 
 const getImageUrl = (name) => {
   return new URL(`../assets/images/${name}.png`, import.meta.url).href
 }
-const tableData = ref([
-  {
-    name: "Java",
-    todayBuy: 100,
-    monthBuy: 200,
-    totalBuy: 300,
-  },
-  {
-    name: "Python",
-    todayBuy: 100,
-    monthBuy: 200,
-    totalBuy: 300,
-  }
-])
-
+const tableData = ref([])
+const countData = ref([])
+const chartData = ref([])
+const observer = ref(null)
 const tableLabel = ref({
   name: "课程",
   todayBuy: "今日购买",
   monthBuy: "本月购买",
   totalBuy: "总购买",
 })
+const xOptions = reactive({
+  // 图例文字颜色
+  textStyle: {
+    color: "#333",
+  },
+  legend: {},
+  grid: {
+    left: "20%",
+  },
+  // 提示框
+  tooltip: {
+    trigger: "axis",
+  },
+  xAxis: {
+    type: "category", // 类目轴
+    data: [],
+    axisLine: {
+      lineStyle: {
+        color: "#17b3a3",
+      },
+    },
+    axisLabel: {
+      interval: 0,
+      color: "#333",
+    },
+  },
+  yAxis: [
+    {
+      type: "value",
+      axisLine: {
+        lineStyle: {
+          color: "#17b3a3",
+        },
+      },
+    },
+  ],
+  color: ["#2ec7c9", "#b6a2de", "#5ab1ef", "#ffb980", "#d87a80", "#8d98b3"],
+  series: [],
+})
+const pieOptions = reactive({
+  tooltip: {
+    trigger: "item",
+  },
+  legend: {},
+  color: [
+    "#0f78f4",
+    "#dd536b",
+    "#9462e5",
+    "#a6a6a6",
+    "#e1bb22",
+    "#39c362",
+    "#3ed1cf",
+  ],
+  series: []
+})
+
 const getTableData = async () => {
   const data = await proxy.$api.getTableData()
   tableData.value = data.tableData
 }
+const getCountData = async () => {
+  const data = await proxy.$api.getCountData()
+  countData.value = data
+}
+const getChartData = async () => {
+  const { orderData, userData, videoData } = await proxy.$api.getChartData()
+  xOptions.xAxis.data = orderData.date
+  xOptions.series = Object.keys(orderData.data[0]).map(val => ({
+    name: val,
+    data: orderData.data.map(item => item[val]),
+    type: "line"
+  })
+  )
+  const OneEcharts = echarts.init(proxy.$refs["echart"])
+  OneEcharts.setOption(xOptions)
+
+  xOptions.xAxis.data = userData.map((item) => item.date)
+    xOptions.series = [
+        {
+          name: "新增用户",
+          data: userData.map((item) => item.new),
+          type: "bar",
+        },
+        {
+          name: "活跃用户",
+          data: userData.map((item) => item.active),
+          type: "bar",
+        }
+      ]
+    const TwoEcharts = echarts.init(proxy.$refs["userEchart"])
+    TwoEcharts.setOption(xOptions)
+
+    pieOptions.series = [
+        {
+          data: videoData,
+          type: "pie",
+        },
+      ]
+    //three
+    const ThreeEcharts = echarts.init(proxy.$refs["videoEchart"])
+    ThreeEcharts.setOption(pieOptions);
+
+    observer.value = new ResizeObserver((en) => {
+        OneEcharts.resize()
+        TwoEcharts.resize()
+        ThreeEcharts.resize()
+    })
+
+    if (proxy.$refs["echart"]) {
+      observer.value.observe(proxy.$refs["echart"]);
+    }
+}
+
 onMounted(() => {
   getTableData()
+  getCountData()
+  getChartData()
 })
 </script>
 
@@ -66,8 +169,29 @@ onMounted(() => {
       </el-card>
 
     </el-col>
-
-
+    <el-col :span="16" style="margin-top: 20px">
+      <div class="num">
+        <el-card :body-style="{ display: 'flex', padding: 0 }" v-for="item in countData" :key="item.name">
+          <component :is="item.icon" class="icon" :style="{ background: item.color }"></component>
+          <div class="detail">
+            <p class="num">{{ item.value }}</p>
+            <p class="txt">{{ item.name }}</p>
+          </div>
+        </el-card>
+        <el-card class="top-echart">
+          <div ref="echart" style="height: 280px;"></div>
+        </el-card>
+      
+        <div class=" graph">
+          <el-card>
+            <div ref="userEchart" style="height: 240px;"></div>
+            </el-card>
+            <el-card>
+              <div ref="videoEchart" style="height: 240px;"></div>
+          </el-card>    
+        </div>
+      </div>
+    </el-col>
   </el-row>
 </template>
 
@@ -125,6 +249,58 @@ onMounted(() => {
 }
 
 .user-table {
+  margin-top: 10px;
+}
+
+.num {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  .el-card {
+    width: 30%;
+    margin-bottom: 5px;
+  }
+
+  .icon {
+    width: 80px;
+    height: 80px;
+    font-size: 30px;
+    text-align: center;
+    line-height: 80px;
+    color: white;
+  }
+
+  .detail {
+    margin-left: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    .num {
+      font-size: 30px;
+      margin-bottom: 10px;
+    }
+
+    .txt {
+      font-size: 14px;
+      text-align: center;
+      color: #999;
+    }
+  }
+
+  .top-echart {
+    width: 100%;
+  }
+}
+
+.graph{
+  display: flex;
   margin-top: 20px;
+  justify-content: space-between;
+  .el-card{
+    width: 48%;
+    height: 260px;
+  }
 }
 </style>

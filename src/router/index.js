@@ -1,7 +1,7 @@
 import {createRouter,createWebHistory} from 'vue-router';
 const routes = [
     {
-        pate:'/',
+        path:'/',
         name:'main',
         component:()=>import('@/views/Main.vue'),
         redirect:'/home',
