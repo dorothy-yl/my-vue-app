@@ -1,6 +1,9 @@
 <template>
     <el-aside :width="width">
-        <el-menu background-color="#545c64" text-color="#fff" :collapse="isCollapse">
+        <el-menu background-color="#545c64" text-color="#fff" 
+        :collapse="isCollapse"
+        :collapse-transition="false"
+        >
             <h3 v-show="!isCollapse">通用后台管理</h3>
             <h3 v-show="isCollapse">后台</h3>
 

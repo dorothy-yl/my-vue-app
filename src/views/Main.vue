@@ -13,7 +13,7 @@ import CommonHeader from '@/components/CommonHeader.vue';
                     <common-header />
                 </el-header>
                 <el-main class="right-main">
-                    main
+                    <router-view ></router-view>
                 </el-main>
             </el-container>
         </el-container>
@@ -27,7 +27,8 @@ import CommonHeader from '@/components/CommonHeader.vue';
 .lay-container {
     height: 100%;
 }
-.el-header{
+
+.el-header {
     background-color: #333;
 }
 </style>
