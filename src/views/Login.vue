@@ -1,20 +1,22 @@
 <script setup>
-
 import {reactive,getCurrentInstance} from 'vue'
 import { useRouter } from 'vue-router';
-
-const { proxy } = getCurrentInstance();
-const router=useRouter()
+import { useAllDateStore } from '@/stores'
 const loginForm = reactive({
   username: '',
   password: '',
 });
-
-const login=async ()=>{
+const { proxy } = getCurrentInstance();
+const router=useRouter()
+const store = useAllDateStore()
+const handleLogin=async ()=>{
     const res = await proxy.$api.getMenu(loginForm);
-    if(res){
-      router.push("/home")
-    }
+  
+        store.updateMenuList(res.menuList)
+        store.state.token=res.token
+        router.push("/home")
+
+
 }
 </script>
 
@@ -43,7 +45,7 @@ const login=async ()=>{
       </el-form-item>
         
       <el-form-item>
-        <el-button type="primary" @click="login"> 登录 </el-button>
+        <el-button type="primary" @click="handleLogin"> 登录 </el-button>
       </el-form-item>
         
     </el-form>

@@ -30,10 +30,14 @@ function updateTags(tag){
   let index = state.value.tags.findIndex(item => item.name === tag.name)
   state.value.tags.splice(index, 1)
 }
+function updateMenuList(val){
+  state.value.menuList = val
+}
 
     return {
         state,
         selectMenu,
-        updateTags
+        updateTags,
+        updateMenuList
      }
   })
