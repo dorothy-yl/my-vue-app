@@ -3,11 +3,12 @@
         <el-menu background-color="#545c64" text-color="#fff" 
         :collapse="isCollapse"
         :collapse-transition="false"
+        :default-active="activeMenu"
         >
             <h3 v-show="!isCollapse">通用后台管理</h3>
             <h3 v-show="isCollapse">后台</h3>
 
-            <el-menu-item v-for="item in noChildren" :index="item.path" :key="item.path">
+            <el-menu-item v-for="item in noChildren" :index="item.path" :key="item.path" @click="handleMenu(item)">
 
                 <component class="icons" :is="item.icon"></component>
                 <span>{{ item.label }}</span>
@@ -20,7 +21,7 @@
                 </template>
                 <el-menu-item-group>
                     <el-menu-item v-for="(subItem, subIndex) in item.children" :index="subItem.path"
-                        :key="subItem.path">
+                        :key="subItem.path" @click="handleMenu(subItem)">
                         <component class="icons" :is="subItem.icon"></component>
                         <span>{{ subItem.label }}</span>
                     </el-menu-item>
@@ -32,6 +33,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useAllDateStore } from '@/stores'
+import { useRouter, useRoute } from 'vue-router'
 const list = ref([
     {
         path: '/home',
@@ -81,7 +83,18 @@ const hasChildren = computed(() => list.value.filter(item => item.children))
 const store = useAllDateStore()
 const isCollapse = computed(() => store.state.isCollapse)
 const width = computed(() => store.state.isCollapse ? '64px' : '180px')
+const router = useRouter()
+const route = useRoute()
+const activeMenu = computed(() => route.path)
+
+
+const handleMenu = (item) => {
+    router.push(item.path)
+    store.selectMenu(item)
+}
 </script>
+
+
 <style scoped lang="less">
 .icons {
     width: 18px;
