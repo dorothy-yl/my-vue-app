@@ -1,5 +1,5 @@
 <script setup>
-import { ref, getCurrentInstance, onMounted, reactive } from 'vue';
+import { ref, getCurrentInstance, onMounted, reactive, nextTick } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 const handleClick = () => {
     console.log('click')
@@ -64,26 +64,77 @@ const changePage = (page) => {
 const handleAdd = () => {
     action.value = 'add'
     dialogVisible.value = true
-    Object.keys(formUser).forEach(key => {
-        formUser[key] = ''
+    // 初始化表单数据
+    Object.assign(formUser, {
+        name: '',
+        age: '',
+        sex: '',
+        birth: '',
+        addr: ''
     })
 }
 
 const handleClose = () => {
     dialogVisible.value = false
-    Object.keys(formUser).forEach(key => {
-        formUser[key] = ''
+    // 重置表单数据
+    Object.assign(formUser, {
+        name: '',
+        age: '',
+        sex: '',
+        birth: '',
+        addr: ''
     })
+    // 清除表单验证
+    if (userForm.value) {
+        userForm.value.clearValidate()
+    }
 }
 
 const handleCancel = () => {
     handleClose()
 }
 
-const onSubmit = () => {
-    // 这里可以添加表单提交逻辑
-    console.log('提交表单', formUser)
-    handleClose()
+const onSubmit = async () => {
+    // 表单验证
+    if (!userForm.value) return
+    await userForm.value.validate(async (valid) => {
+        if (valid) {
+            try {
+                if (action.value === 'add') {
+                    // 新增用户
+                    await proxy.$api.addUser(formUser)
+                    ElMessage({
+                        type: 'success',
+                        message: '新增成功',
+                        showClose: true,
+                    })
+                } else {
+                    // 编辑用户
+                    await proxy.$api.editUser(formUser)
+                    ElMessage({
+                        type: 'success',
+                        message: '编辑成功',
+                        showClose: true,
+                    })
+                }
+                // 关闭对话框并刷新数据
+                handleClose()
+                getUserData()
+            } catch (error) {
+                ElMessage({
+                    type: 'error',
+                    message: '操作失败',
+                    showClose: true,
+                })
+            }
+        } else {
+            ElMessage({
+                type: 'error',
+                message: '请填写完整信息',
+                showClose: true,
+            })
+        }
+    })
 }
 
 const handleDelete = (val) => {
@@ -100,6 +151,7 @@ const handleDelete = (val) => {
 const action = ref('add')
 const dialogVisible = ref(false)
 const formUser = reactive({})
+const userForm = ref(null)
 const rules = reactive({
     //表单校验规则
     name: [{ required: true, message: "姓名是必填项", trigger: "blur" }],
@@ -111,7 +163,13 @@ const rules = reactive({
     birth: [{ required: true, message: "出生日期是必选项" }],
     addr: [{ required: true, message: '地址是必填项' }]
 })
-
+const handleEdit = (val) => {
+    action.value = 'edit'
+    dialogVisible.value = true
+    nextTick(() => {
+        Object.assign(formUser, { ...val, sex: '' + val.sex })
+    })
+}
 onMounted(() => {
     getUserData()
 })
@@ -135,82 +193,64 @@ onMounted(() => {
             <el-table-column v-for="item in tableLabel" :key="item.prop" :prop="item.prop"
                 :width="item.width ? item.width : 125" :label="item.label" />
             <el-table-column fixed="right" label="Operations" min-width="120">
-                <template #default="scope">
-                    <el-button type="primary" size="small" @click="handleClick">
+                <template #="scope">
+                    <el-button type="primary" size="small" @click="handleEdit(scope.row)">
                         编辑
                     </el-button>
                     <el-button type="danger" size="small" @click="handleDelete(scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
-        
-        <el-pagination
-            size="small"
-            background
-            layout="prev, pager, next"
-            :total="config.total"
-            @current-change="changePage"
-            class="pager"
-        />
+
+        <el-pagination size="small" background layout="prev, pager, next" :total="config.total"
+            @current-change="changePage" class="pager" />
     </div>
-    <el-dialog
-    v-model="dialogVisible"
-    :title="action == 'add' ? '新增用户' : '编辑用户'"
-    width="35%"
-    :before-close="handleClose"
-  >
-       <!--需要注意的是设置了:inline="true"，
+    <el-dialog v-model="dialogVisible" :title="action == 'add' ? '新增用户' : '编辑用户'" width="35%"
+        :before-close="handleClose">
+        <!--需要注意的是设置了:inline="true"，
 		会对el-select的样式造成影响，我们通过给他设置一个class=select-clearn
 		在css进行处理-->
-    <el-form :inline="true"  :model="formUser" :rules="rules" ref="userForm">
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="姓名" prop="name">
-            <el-input v-model="formUser.name" placeholder="请输入姓名" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="年龄" prop="age">
-            <el-input v-model.number="formUser.age" placeholder="请输入年龄" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item class="select-clearn" label="性别" prop="sex">
-            <el-select  v-model="formUser.sex" placeholder="请选择">
-              <el-option label="男" value="1" />
-              <el-option label="女" value="0" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="出生日期" prop="birth">
-            <el-date-picker
-              v-model="formUser.birth"
-              type="date"
-              placeholder="请输入"
-              style="width: 100%"
-            />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-form-item
-          label="地址"
-          prop="addr"
-        >
-          <el-input v-model="formUser.addr" placeholder="请输入地址" />
-        </el-form-item>
-      </el-row>
-      <el-row style="justify-content: flex-end">
-        <el-form-item>
-          <el-button type="primary" @click="handleCancel">取消</el-button>
-          <el-button type="primary" @click="onSubmit">确定</el-button>
-        </el-form-item>
-      </el-row>
-    </el-form>
-  </el-dialog>
+        <el-form :inline="true" :model="formUser" :rules="rules" ref="userForm">
+            <el-row>
+                <el-col :span="12">
+                    <el-form-item label="姓名" prop="name">
+                        <el-input v-model="formUser.name" placeholder="请输入姓名" />
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="年龄" prop="age">
+                        <el-input v-model.number="formUser.age" placeholder="请输入年龄" />
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col :span="12">
+                    <el-form-item class="select-clearn" label="性别" prop="sex">
+                        <el-select v-model="formUser.sex" placeholder="请选择">
+                            <el-option label="男" value="1" />
+                            <el-option label="女" value="0" />
+                        </el-select>
+                    </el-form-item>
+                </el-col>
+                <el-col :span="12">
+                    <el-form-item label="出生日期" prop="birth">
+                        <el-date-picker v-model="formUser.birth" type="date" placeholder="请输入" style="width: 100%" />
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-form-item label="地址" prop="addr">
+                    <el-input v-model="formUser.addr" placeholder="请输入地址" />
+                </el-form-item>
+            </el-row>
+            <el-row style="justify-content: flex-end">
+                <el-form-item>
+                    <el-button type="primary" @click="handleCancel">取消</el-button>
+                    <el-button type="primary" @click="onSubmit">确定</el-button>
+                </el-form-item>
+            </el-row>
+        </el-form>
+    </el-dialog>
 </template>
 
 

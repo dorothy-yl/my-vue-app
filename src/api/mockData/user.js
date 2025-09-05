@@ -80,32 +80,56 @@ export default {
         message: '删除成功'
       }
     }
-  }
+  },
 
-}
+  /**
+   * 新增用户
+   * @param name, addr, age, birth, sex
+   * @return {{code: number, data: {message: string}}}
+   */
+  createUser: config => {
+    const { name, addr, age, birth, sex } = JSON.parse(config.body)
+    const sex_num = parseInt(sex)
+    const newUser = {
+      id: Mock.Random.guid(),
+      name: name,
+      addr: addr,
+      age: age,
+      birth: birth,
+      sex: sex_num
+    }
+    List.unshift(newUser) // 添加到列表开头
+    return {
+      code: 200,
+      data: {
+        message: '新增成功'
+      }
+    }
+  },
 
-/**
+  /**
    * 修改用户
    * @param id, name, addr, age, birth, sex
    * @return {{code: number, data: {message: string}}}
    */
-updateUser: config => {
-  const { id, name, addr, age, birth, sex } = JSON.parse(config.body)
-  const sex_num = parseInt(sex)
-  List.some(u => {
-    if (u.id === id) {
-      u.name = name
-      u.addr = addr
-      u.age = age
-      u.birth = birth
-      u.sex = sex_num
-      return true
-    }
-  })
-  return {
-    code: 200,
-    data: {
-      message: '编辑成功'
+  updateUser: config => {
+    const { id, name, addr, age, birth, sex } = JSON.parse(config.body)
+    const sex_num = parseInt(sex)
+    List.some(u => {
+      if (u.id === id) {
+        u.name = name
+        u.addr = addr
+        u.age = age
+        u.birth = birth
+        u.sex = sex_num
+        return true
+      }
+    })
+    return {
+      code: 200,
+      data: {
+        message: '编辑成功'
+      }
     }
   }
 }
