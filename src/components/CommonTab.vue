@@ -8,6 +8,8 @@ const route = useRoute()
 const router = useRouter()
 
 const tags = computed(() => {
+    console.log(store.state.tags);
+    
     //这个在下面配置
     return store.state.tags
 })
@@ -15,20 +17,23 @@ const tags = computed(() => {
 const changeMenu = (tag) => {
     //单击tab时，联动面包屑
     store.selectMenu(tag)
-    //跳转对应页面
-    router.push(tag.name)
+    //跳转对应页面，确保路径格式正确
+    const path = tag.path.startsWith('/') ? tag.path : `/${tag.path}`;
+    router.push(path)
 }
 
 //关闭tab时触发
 const handleClose = (tag, index) => {
     store.updateTags(tag)
-    if (tag.name === 'route.home') return
+    if (tag.name === 'home') return
     if (index === store.state.tags.length) {
         store.selectMenu(tags.value[index - 1])
-        router.push(tags.value[index - 1].name)
+        const path = tags.value[index - 1].path.startsWith('/') ? tags.value[index - 1].path : `/${tags.value[index - 1].path}`;
+        router.push(path)
     } else {
         store.selectMenu(tags.value[index])
-        router.push(tags.value[index].name)
+        const path = tags.value[index].path.startsWith('/') ? tags.value[index].path : `/${tags.value[index].path}`;
+        router.push(path)
     }
 }
 </script>

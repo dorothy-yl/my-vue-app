@@ -1,5 +1,5 @@
 <script setup>
-import {reactive,getCurrentInstance} from 'vue'
+import { reactive, getCurrentInstance } from 'vue'
 import { useRouter } from 'vue-router';
 import { useAllDateStore } from '@/stores'
 const loginForm = reactive({
@@ -7,62 +7,56 @@ const loginForm = reactive({
   password: '',
 });
 const { proxy } = getCurrentInstance();
-const router=useRouter()
+const router = useRouter()
 const store = useAllDateStore()
-const handleLogin=async ()=>{
-    const res = await proxy.$api.getMenu(loginForm);
-  
-        store.updateMenuList(res.menuList)
-        store.state.token=res.token
-        router.push("/home")
+const handleLogin = async () => {
+  const res = await proxy.$api.getMenu(loginForm);
+  if (res) {
+    store.updateMenuList(res.menuList)
+    store.state.token = res.token
+    store.addMenu(router)
 
-
+    router.push("/home")
+  }
 }
 </script>
 
 
 <template>
-    <div class="body-login">
+  <div class="body-login">
     <el-form :model="loginForm" class="login-container">
       <h3>欢迎登录</h3>
-        
+
       <el-form-item>
-        <el-input
-          type="input"
-          placeholder="请输入账号"
-          v-model="loginForm.username"
-        >
+        <el-input type="input" placeholder="请输入账号" v-model="loginForm.username">
         </el-input>
       </el-form-item>
-        
+
       <el-form-item>
-        <el-input
-          type="password"
-          placeholder="请输入密码"
-          v-model="loginForm.password"
-        >
+        <el-input type="password" placeholder="请输入密码" v-model="loginForm.password">
         </el-input>
       </el-form-item>
-        
+
       <el-form-item>
         <el-button type="primary" @click="handleLogin"> 登录 </el-button>
       </el-form-item>
-        
+
     </el-form>
-</div>
+  </div>
 </template>
 
 
 
 
 <style lang="less" scoped>
-.body-login{
-    background-image: url('../assets/images/background.png');
-    background-size: 100%;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
+.body-login {
+  background-image: url('../assets/images/background.png');
+  background-size: 100%;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
+
 .login-container {
   width: 350px;
   background-color: #fff;
@@ -71,11 +65,13 @@ const handleLogin=async ()=>{
   padding: 35px 35px 15px 35px;
   box-shadow: 0 0 25px #cacaca;
   margin: 180px auto;
+
   h3 {
     text-align: center;
     margin-bottom: 20px;
     color: #505450;
   }
+
   :deep(.el-form-item__content) {
     justify-content: center;
   }

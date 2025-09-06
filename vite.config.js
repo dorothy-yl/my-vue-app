@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import { codeInspectorPlugin } from 'code-inspector-plugin'
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -18,11 +19,8 @@ export default defineConfig({
   ],
   // 这个是resolve是添加的别名
   resolve: {
-    alias: [
-      {
-        find: '@',
-        replacement: "/src",
-      }
-    ]
+    alias: {
+      '@': path.resolve(__dirname, 'src')
+    }
   }
 })
