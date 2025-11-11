@@ -1,5 +1,176 @@
-# Vue 3 + Vite
+# My Vue App
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+一个基于 Vue 3 + Vite 构建的现代化管理系统，集成了 Element Plus UI 框架、Pinia 状态管理、Vue Router 路由等主流技术栈。
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+## ✨ 特性
+
+- 🚀 **Vue 3** - 使用最新的 Vue 3 Composition API
+- ⚡ **Vite** - 极速的构建工具和开发服务器
+- 🎨 **Element Plus** - 基于 Vue 3 的组件库
+- 🗂 **Vue Router** - 官方路由管理器
+- 📦 **Pinia** - 新一代状态管理工具
+- 📱 **响应式设计** - 适配各种屏幕尺寸
+- 🔧 **Less** - CSS 预处理器
+- 📊 **ECharts** - 数据可视化图表库
+- 🔍 **Code Inspector** - 代码检查插件
+- 🎭 **Mock.js** - 模拟数据生成
+
+## 📁 项目结构
+
+```
+my-vue-app/
+├── public/                 # 静态资源
+├── src/
+│   ├── api/               # API 接口
+│   ├── assets/            # 资源文件
+│   │   └── images/        # 图片资源
+│   ├── components/        # 公共组件
+│   │   ├── CommonAside.vue    # 侧边栏组件
+│   │   ├── CommonHeader.vue   # 头部组件
+│   │   └── CommonTab.vue      # 标签页组件
+│   ├── config/            # 配置文件
+│   ├── less/              # 样式文件
+│   ├── router/            # 路由配置
+│   ├── stores/            # Pinia 状态管理
+│   ├── views/             # 页面组件
+│   │   ├── 404.vue        # 404 页面
+│   │   ├── Home.vue       # 首页
+│   │   ├── Login.vue      # 登录页
+│   │   ├── Main.vue       # 主页面
+│   │   ├── Mall.vue       # 商城页面
+│   │   └── User.vue       # 用户页面
+│   ├── App.vue            # 根组件
+│   └── main.js            # 入口文件
+├── index.html             # HTML 模板
+├── package.json           # 项目配置
+├── vite.config.js         # Vite 配置
+└── README.md              # 项目说明
+```
+
+## 🛠 技术栈
+
+- **前端框架**: Vue 3.5.18
+- **构建工具**: Vite 7.1.2
+- **UI 框架**: Element Plus 2.11.1
+- **状态管理**: Pinia 3.0.3
+- **路由管理**: Vue Router 4.5.1
+- **HTTP 客户端**: Axios 1.11.0
+- **CSS 预处理**: Less 4.4.1
+- **图表库**: ECharts 6.0.0
+- **Mock 数据**: Mock.js 1.1.0
+
+## 🚀 快速开始
+
+### 环境要求
+
+- Node.js >= 16.0.0
+- npm >= 7.0.0 或 pnpm >= 6.0.0
+
+### 安装依赖
+
+```bash
+# 使用 npm
+npm install
+
+# 或使用 pnpm
+pnpm install
+```
+
+### 开发模式
+
+```bash
+# 启动开发服务器
+npm run dev
+
+# 或使用 pnpm
+pnpm dev
+```
+
+访问 [http://localhost:5173](http://localhost:5173) 查看应用。
+
+### 构建生产版本
+
+```bash
+# 构建生产版本
+npm run build
+
+# 或使用 pnpm
+pnpm build
+```
+
+### 预览生产版本
+
+```bash
+# 预览构建结果
+npm run preview
+
+# 或使用 pnpm
+pnpm preview
+```
+
+## 📋 功能特性
+
+### 🔐 用户认证
+- 用户登录/登出
+- 路由守卫保护
+- Token 状态管理
+
+### 📊 数据展示
+- 响应式图表展示
+- 数据可视化面板
+- 实时数据更新
+
+### 🎨 UI 组件
+- 侧边栏导航
+- 顶部导航栏
+- 标签页管理
+- 响应式布局
+
+### 🛒 业务模块
+- 首页仪表板
+- 用户管理
+- 商城功能
+- 404 错误页面
+
+## ⚙️ 配置说明
+
+### Vite 配置
+
+项目使用了以下 Vite 配置：
+
+- **路径别名**: `@` 指向 `src` 目录
+- **Code Inspector**: 集成代码检查插件，支持 Cursor 编辑器
+- **Vue 插件**: 支持 Vue 3 单文件组件
+
+### 路由配置
+
+- 实现了路由守卫，未登录用户自动跳转到登录页
+- 404 页面处理不存在的路由
+- 动态菜单生成
+
+## 🤝 贡献指南
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 打开 Pull Request
+
+## 📝 开发规范
+
+- 使用 Vue 3 Composition API
+- 遵循 ESLint 代码规范
+- 组件命名使用 PascalCase
+- 文件命名使用 kebab-case
+
+## 📄 许可证
+
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
+
+## 🔗 相关链接
+
+- [Vue 3 官方文档](https://vuejs.org/)
+- [Vite 官方文档](https://vitejs.dev/)
+- [Element Plus 官方文档](https://element-plus.org/)
+- [Pinia 官方文档](https://pinia.vuejs.org/)
+- [Vue Router 官方文档](https://router.vuejs.org/)
