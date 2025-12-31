@@ -12,9 +12,24 @@ const routes = [
                 component:()=>import('@/views/Home.vue')
             },
             {
+                path:'dashboard',
+                name:'dashboard',
+                component:()=>import('@/views/Dashboard.vue')
+            },
+            {
+                path:'course/editor',
+                name:'courseEditor',
+                component:()=>import('@/views/CourseEditor.vue')
+            },
+            {
                 path:'user',
                 name:'user',
                 component:()=>import('@/views/User.vue')
+            },
+            {
+                path:'user/center',
+                name:'userCenter',
+                component:()=>import('@/views/UserCenter.vue')
             },
             {
                 path:'mall',

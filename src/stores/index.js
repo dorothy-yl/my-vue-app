@@ -1,6 +1,9 @@
 import { defineStore } from 'pinia'
 import { ref, watch } from 'vue'
 import router from '@/router'
+
+// 导出 user store
+export { useUserStore } from './user'
 function initState() {
   return {
     routerList: [],

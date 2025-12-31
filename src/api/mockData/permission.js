@@ -18,10 +18,31 @@ export default {
               url: 'Home'
             },
             {
+              path: '/dashboard',
+              name: 'dashboard',
+              label: '视频管理',
+              icon: 'data-analysis',
+              url: 'Dashboard'
+            },
+            {
+              path: 'course',
+              label: '课程管理',
+              icon: 'video-play',
+              children: [
+                {
+                  path: '/course/editor',
+                  name: 'courseEditor',
+                  label: '课程编辑',
+                  icon: 'edit',
+                  url: 'CourseEditor'
+                }
+              ]
+            },
+            {
               path: '/mall',
               name: 'mall',
               label: '商品管理',
-              icon: 'video-play',
+              icon: 'shopping-cart',
               url: 'Mall'
             },
             {
@@ -30,6 +51,13 @@ export default {
               label: '用户管理',
               icon: 'user',
               url: 'User'
+            },
+            {
+              path: '/user/center',
+              name: 'userCenter',
+              label: '用户中心',
+              icon: 'user-filled',
+              url: 'UserCenter'
             },
             {
               path: 'other',
@@ -70,11 +98,25 @@ export default {
               url: 'Home'
             },
             {
+              path: '/dashboard',
+              name: 'dashboard',
+              label: '视频管理',
+              icon: 'data-analysis',
+              url: 'Dashboard'
+            },
+            {
               path: '/user',
               name: 'user',
               label: '用户管理',
               icon: 'user',
               url: 'User'
+            },
+            {
+              path: '/user/center',
+              name: 'userCenter',
+              label: '个人中心',
+              icon: 'user-filled',
+              url: 'UserCenter'
             }
           ],
           token: Mock.Random.guid(),
