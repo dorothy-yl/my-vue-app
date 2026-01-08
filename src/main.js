@@ -13,8 +13,10 @@ import { useAllDateStore } from './stores'
 function isRoute(to){
     return router.getRoutes().filter(item=>item.path===to.path).length>0
  }
- 
+
+
  router.beforeEach((to, from) => {
+
       //如果要跳转的不是login,且token不存在(可以通过不存在token判断出用户未登录)
      if(to.path !== '/login'&&!store.state.token){
          //跳转到login
@@ -27,11 +29,13 @@ function isRoute(to){
      }
  })
  
-const pinia = createPinia()
+ const pinia = createPinia()
 const app = createApp(App);
 app.config.globalProperties.$api = api
 app.use(pinia);
 const store = useAllDateStore()
+
+ 
 
 app.use(ElementPlus);
 app.use(router).mount('#app')

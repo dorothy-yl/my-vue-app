@@ -4,6 +4,7 @@ import router from '@/router'
 
 // 导出 user store
 export { useUserStore } from './user'
+
 function initState() {
   return {
     routerList: [],
@@ -11,20 +12,51 @@ function initState() {
     tags: [],
     currentMenu: null,
     isCollapse: false,
-    token: null
+    token: null // 保留原有 token 字段
   }
 }
-export const useAllDateStore = defineStore('allData', (a) => {
 
+export const useAllDateStore = defineStore('allData', () => { // 注意：原代码的 (a) 是多余的，改为空括号
+  // 初始化 state：优先从 localStorage 恢复，没有则用初始值
+  const initData = JSON.parse(localStorage.getItem('store')) || initState();
+  const state = ref(initData);
 
-  const state = ref(initState());
+  // 监听 state 变化，同步到 localStorage（包含 token 持久化）
   watch(state, (newObj) => {
-    if (!newObj.token) {
-      localStorage.setItem('store', JSON.stringify(newObj));
-    }
-  }, { deep: true }
-  )
+    // 原逻辑只在 token 不存在时存储，改为始终存储（保证 token 同步）
+    localStorage.setItem('store', JSON.stringify(newObj));
+  }, { deep: true })
 
+  // ========== 新增：token 专属操作方法 ==========
+  /**
+   * 设置 token
+   * @param {string} newToken - 后端返回的 token 字符串
+   */
+  function setToken(newToken) {
+    state.value.token = newToken;
+    // 主动同步到 localStorage（兜底，防止 watch 延迟）
+    localStorage.setItem('store', JSON.stringify(state.value));
+    console.log('token 已设置:', newToken);
+  }
+
+  /**
+   * 获取当前 token
+   * @returns {string|null} 当前的 token 值
+   */
+  function getToken() {
+    return state.value.token;
+  }
+
+  /**
+   * 清空 token（单独调用，比如 token 过期时）
+   */
+  function clearToken() {
+    state.value.token = null;
+    localStorage.setItem('store', JSON.stringify(state.value));
+    console.log('token 已清空');
+  }
+
+  // ========== 原有方法保留（仅优化 clearn 方法联动 token） ==========
   function selectMenu(val) {
     console.log("selectMenu called with:", val);
     
@@ -125,13 +157,15 @@ export const useAllDateStore = defineStore('allData', (a) => {
   }
 
   function clearn() {
+    // 清空路由
     state.value.routerList.forEach(item => {
       if (item) item()
     })
-    //重置state的数据
+    // 重置state的数据（包含 token 置空）
     state.value = initState()
-    //删除本地缓存，因为这个clearn方法是用户退出执行的
+    // 删除本地缓存
     localStorage.removeItem('store')
+    console.log('退出登录，已清空所有状态和 token');
   }
 
   function updateTags(tag) {
@@ -139,16 +173,21 @@ export const useAllDateStore = defineStore('allData', (a) => {
     let index = state.value.tags.findIndex(item => item.name === tag.name)
     state.value.tags.splice(index, 1)
   }
+
   function updateMenuList(val) {
     state.value.menuList = val
   }
 
+  // ========== 导出所有方法（新增 token 方法） ==========
   return {
     state,
     selectMenu,
     updateTags,
     updateMenuList,
     clearn,
-    addMenu
+    addMenu,
+    setToken,    // 新增：导出设置 token 方法
+    getToken,    // 新增：导出获取 token 方法
+    clearToken   // 新增：导出清空 token 方法
   }
 })

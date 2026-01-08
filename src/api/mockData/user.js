@@ -1,5 +1,4 @@
 import Mock from 'mockjs'
-
 // get请求从config.url获取参数，post从config.body中获取参数
 function param2Obj(url) {
   const search = url.split('?')[1]
@@ -18,16 +17,37 @@ function param2Obj(url) {
 
 let List = []
 const count = 200
+
+// 登录方式选项列表
+const loginMethodList = [
+  '国内-手机号',
+  '国内-apple登录',
+  '国内-邮箱',
+  '国内-微信',
+  '国内-i console(扫码)',
+  '国内-i console(iconsole账号)',
+  '国外-邮箱',
+  '国外-apple登录',
+  '国外-Google',
+  '国外-Facebook',
+  '国外-i console(扫码)',
+  '国外-i console(iconsole账号)'
+]
+
 //模拟200条用户数据
 for (let i = 0; i < count; i++) {
+  const height = Mock.Random.integer(50, 250)
+  const weight = (Mock.Random.float(20, 200, 1, 1)).toFixed(1) // 生成20.0-200.0的体重，保留1位小数
   List.push(
     Mock.mock({
       id: Mock.Random.guid(),
       name: Mock.Random.cname(),
       addr: Mock.mock('@county(true)'),
-      'age|18-60': 1,
+      height: height,
+      weight: parseFloat(weight),
       birth: Mock.Random.date(),
-      sex: Mock.Random.integer(0, 1)
+      sex: Mock.Random.integer(0, 1),
+      loginMethod: loginMethodList[Mock.Random.integer(0, loginMethodList.length - 1)]
     })
   )
 }
@@ -84,17 +104,19 @@ export default {
 
   /**
    * 新增用户
-   * @param name, addr, age, birth, sex
+   * @param name, addr, height, weight, loginMethod, birth, sex
    * @return {{code: number, data: {message: string}}}
    */
   createUser: config => {
-    const { name, addr, age, birth, sex } = JSON.parse(config.body)
+    const { name, addr, height, weight, loginMethod, birth, sex } = JSON.parse(config.body)
     const sex_num = parseInt(sex)
     const newUser = {
       id: Mock.Random.guid(),
       name: name,
       addr: addr,
-      age: age,
+      height: height,
+      weight: weight,
+      loginMethod: loginMethod,
       birth: birth,
       sex: sex_num
     }
@@ -109,17 +131,19 @@ export default {
 
   /**
    * 修改用户
-   * @param id, name, addr, age, birth, sex
+   * @param id, name, addr, height, weight, loginMethod, birth, sex
    * @return {{code: number, data: {message: string}}}
    */
   updateUser: config => {
-    const { id, name, addr, age, birth, sex } = JSON.parse(config.body)
+    const { id, name, addr, height, weight, loginMethod, birth, sex } = JSON.parse(config.body)
     const sex_num = parseInt(sex)
     List.some(u => {
       if (u.id === id) {
         u.name = name
         u.addr = addr
-        u.age = age
+        u.height = height
+        u.weight = weight
+        u.loginMethod = loginMethod
         u.birth = birth
         u.sex = sex_num
         return true

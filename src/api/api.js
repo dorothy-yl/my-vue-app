@@ -63,6 +63,13 @@ export default {
       method: 'post',
       data: params
     })
+  },
+  // 获取验证码
+  getCaptcha() {
+    return request({
+      url: '/iConsoleProAdmin/captchaImage',
+      method: 'get',
+    })
   }
 }
 

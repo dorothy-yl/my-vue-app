@@ -159,6 +159,8 @@ onMounted(() => {
   getCountData()
   getChartData()
 })
+
+
 </script>
 
 <template>
