@@ -1,58 +1,63 @@
-import {createRouter,createWebHistory} from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
 const routes = [
     {
-        path:'/',
-        name:'main',
-        component:()=>import('@/views/Main.vue'),
-        redirect:'/home',
-        children:[
+        path: '/',
+        name: 'main',
+        component: () => import('@/views/Main.vue'),
+        redirect: '/home',
+        children: [
             {
-                path:'home',
-                name:'home',
-                component:()=>import('@/views/Home.vue')
+                path: 'home',
+                name: 'home',
+                component: () => import('@/views/Home.vue')
             },
             {
-                path:'dashboard',
-                name:'dashboard',
-                component:()=>import('@/views/Dashboard.vue')
+                path: 'dashboard',
+                name: 'dashboard',
+                component: () => import('@/views/Dashboard.vue')
             },
             {
-                path:'course/editor',
-                name:'courseEditor',
-                component:()=>import('@/views/CourseEditor.vue')
+                path: 'course/editor',
+                name: 'courseEditor',
+                component: () => import('@/views/CourseEditor.vue')
             },
             {
-                path:'user',
-                name:'user',
-                component:()=>import('@/views/User.vue')
+                path: 'user',
+                name: 'user',
+                component: () => import('@/views/User.vue')
             },
             {
-                path:'user/center',
-                name:'userCenter',
-                component:()=>import('@/views/UserCenter.vue')
+                path: 'user/center',
+                name: 'userCenter',
+                component: () => import('@/views/UserCenter.vue')
             },
             {
-                path:'mall',
-                name:'mall',
-                component:()=>import('@/views/Mall.vue')
+                path: 'mall',
+                name: 'mall',
+                component: () => import('@/views/Mall.vue')
             },
-           
+
         ]
     },
     {
-        path:'/login',
-        name:'login',
-        component:()=>import('@/views/Login.vue')
+        path: '/login',
+        name: 'login',
+        component: () => import('@/views/Login.vue')
     },
     {
         path: '/404',
         name: '404',
         component: () => import('@/views/404.vue')
-      },
-     
-    ]
+    },
+    {
+        path: '/home',
+        name: 'home',
+        component: () => import('@/views/Home.vue')
+    },
+
+]
 const router = createRouter({
-    history:createWebHistory(),
+    history: createWebHistory(),
     routes,
 })
 
