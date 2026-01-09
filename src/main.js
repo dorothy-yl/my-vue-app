@@ -23,15 +23,22 @@ const store = useAllDateStore()
 
 // 在 store 初始化后注册路由守卫
 router.beforeEach((to, from) => {
-    //如果要跳转的不是login,且token不存在(可以通过不存在token判断出用户未登录)
-    console.log(to.path,store.state.token);
-    if(to.path !== '/login' && !store.state.token){
-        //跳转到login
+    console.log('路由跳转:', to.path, '当前token:', store.state.token);
+    
+    // 如果是登录页或404页，直接放行
+    if(to.path === '/login' || to.path === '/404'){
+        return true;
+    }
+    
+    // 如果token不存在（未登录），跳转到登录页
+    if(!store.state.token){
+        console.log('未登录，跳转到登录页');
         return { name: 'login' }
     }
-    //如果路由记录不存在
+    
+    // 如果路由记录不存在，跳转到404界面
     if(!isRoute(to)){
-        //跳转到404界面
+        console.log('路由不存在，跳转到404');
         return {name: "404"}
     }
 })
